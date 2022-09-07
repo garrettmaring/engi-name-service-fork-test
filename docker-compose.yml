@@ -1,0 +1,14 @@
+version: "3.9"
+
+services:
+  tests:
+    build: .
+    # note Docker doesn't exec the command using a shell so let's use one explictly 
+    command: /bin/sh -c "cargo test -- -Z unstable-options --format json | tee ${TMPDIR}/results.txt"
+    volumes:
+      # share the source code for live reloading
+      - .:/code
+      # bind mount /tmp from the host to share the output of pytest
+      - type: bind
+        source: ${TMPDIR}
+        target: ${TMPDIR}
